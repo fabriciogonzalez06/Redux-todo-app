@@ -1,5 +1,7 @@
 import * as fromTodo from './todo.actions';
 import { Todo } from './models/todo.model';
+import { BORRAR_TODO, TOGGLE_ALL } from './todo.actions';
+import { type } from 'os';
 
 
 const estadoInicial: Todo[] = [new Todo('vencear a tanos'), new Todo('Vencer el mal')];
@@ -31,7 +33,34 @@ export function todoReducer(state = estadoInicial, action: fromTodo.Acciones): T
                     return todoEdit;
                 }
             });
-
+        
+        //marcar o desmarcar todos los todos
+        case TOGGLE_ALL:
+            return state.map(todoEdit=>{
+                return {
+                    ...todoEdit,
+                    completado:action.completado
+                }
+            });
+        //editar
+        case fromTodo.EDITAR_TODO:
+            return state.map(todoEdit=>{
+                if(todoEdit.id === action.id){
+                   
+                 
+                   
+                    return {
+                         ...todoEdit,
+                         texto:action.text
+                     }
+                }else {
+                    return todoEdit;
+                }
+            }); 
+        //eliminar 
+        case fromTodo.BORRAR_TODO:
+            return state.filter(todo => todo.id !== action.id);
+        
         default:
             return state;
     }

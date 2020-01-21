@@ -3,7 +3,7 @@ import { Todo } from '../models/todo.model';
 import { FormControl } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { appState } from '../../app.reducers';
-import { ToggleTodoAction } from '../todo.actions';
+import { ToggleTodoAction, EditarTodoAction, BorrarTodoAction } from '../todo.actions';
 
 @Component({
   selector: 'app-todo-item',
@@ -25,7 +25,7 @@ export class TodoItemComponent implements OnInit {
   ngOnInit() {
     this.chkField = new FormControl(this.todo.completado);
     this.txtInput = new FormControl(this.todo.texto);
-
+    //suscribirse a cualquier cambio en el valor del checkbox
     this.chkField.valueChanges.subscribe(() => {
 
       const action = new ToggleTodoAction(this.todo.id);
@@ -47,5 +47,26 @@ export class TodoItemComponent implements OnInit {
 
   terminarEdicion() {
     this.editando = false;
+    
+       if(this.txtInput.invalid){
+        return;
+       }
+
+
+       if(this.todo.texto===this.txtInput.value){
+            return;
+       }
+  
+
+      //llamar a la accion 
+      const action= new EditarTodoAction(this.todo.id,this.txtInput.value);
+      this.store.dispatch(action);
+  }
+
+  //borrar todo
+  borrarTodo(){
+
+    const action = new BorrarTodoAction(this.todo.id);
+    this.store.dispatch(action);
   }
 }
